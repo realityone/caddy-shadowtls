@@ -83,3 +83,7 @@ http://:8080 {
 |------------------------------|--------------------------------------------------------------------|
 | `handshake_server`           | Address of the TLS server used for the handshake (e.g. `www.example.com:443`) |
 | `handshake_for_server_name`  | Additional SNI names and optional alternate handshake addresses     |
+
+## Acknowledgements
+
+Great thanks to [sing-shadowtls](https://github.com/sagernet/sing-shadowtls) by [@nekohasekai](https://github.com/nekohasekai) for the excellent ShadowTLS library that powers this module, and to [ShadowTLS](https://github.com/ihciah/shadow-tls) by [@ihciah](https://github.com/ihciah) for creating the original protocol.
