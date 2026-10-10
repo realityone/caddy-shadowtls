@@ -12,6 +12,7 @@ import (
 
 	"github.com/realityone/caddy-shadowtls/app"
 	shadowtls "github.com/sagernet/sing-shadowtls"
+	"github.com/sagernet/sing/common/bufio/deadline"
 	M "github.com/sagernet/sing/common/metadata"
 	N "github.com/sagernet/sing/common/network"
 )
@@ -174,6 +175,12 @@ func (l *Listener) handleConn(conn net.Conn) {
 // NewConnectionEx implements N.TCPConnectionHandlerEx.
 // It delivers unwrapped connections to Accept().
 func (l *Listener) NewConnectionEx(ctx context.Context, conn net.Conn, source M.Socksaddr, destination M.Socksaddr, onClose N.CloseHandlerFunc) {
+	// HTTP/1 hijacking cancels a pending read with an expired deadline. Keep
+	// that cancellation above ShadowTLS, whose record reader treats transport
+	// read errors as fatal and cannot resume a partially read record.
+	if deadline.NeedAdditionalReadDeadline(conn) {
+		conn = deadline.NewConn(conn)
+	}
 	select {
 	case l.connCh <- conn:
 	case <-l.closed:
